@@ -1,8 +1,9 @@
 from random import randint
 import requests
-
+import random
 class Pokemon:
     pokemons = {}
+    hunger = random.randint(20,100)
     # Инициализация объекта (конструктор)
     def __init__(self, pokemon_trainer):
 
@@ -12,7 +13,7 @@ class Pokemon:
         self.img = self.get_img()
         self.name = self.get_name()
         self.hp = self.get_hp()
-        self.attack = self.get_attack()
+        self.power = self.get_attack()
 
         Pokemon.pokemons[pokemon_trainer] = self
 
@@ -58,22 +59,48 @@ class Pokemon:
                 return (data["stats"][1]["base_stat"])
             else:
                 return "https://yandex.ru/images/search?pos=0&from=tabbar&img_url=https%3A%2F%2Fpolinka.top%2Fpics2%2Fuploads%2Fposts%2F2024-02%2F1706896995_polinka-top-p-dulya-risunok-vkontakte-19.jpg&text=abu+nt%2Ct+ajnj&rpt=simage&lr=213"
+    
+    def attack(self, enemy):
+        if isinstance(enemy, Wizard): # Проверка на то, что enemy является типом данных Wizard (является экземпляром класса Волшебник)
+            chance = randint(1,5)
+            if chance == 1:
+                return "Покемон-волшебник применил щит в сражении"
+        if enemy.hp > self.power:
+            enemy.hp -= self.power
+            return f"Сражение @{self.pokemon_trainer} с @{enemy.pokemon_trainer}"
+
+        else:
+            enemy.hp = 0
+            return f"Победа @{self.pokemon_trainer} над @{enemy.pokemon_trainer}! "
 
 
-
-    # Метод класса для получения информации
     def info(self):
-        return f"Имя твоего покеомона: {self.name}"
+        return f"Имя твоего покеомона: {self.name}\n Хп твоего покемна: {self.hp}\n Сила атаки твоего покемона: {self.power}"
 
     # Метод класса для получения картинки покемона
     def show_img(self):
         return self.img
+
+class Fighter(Pokemon):
+    def attack(self, enemy):
+        super_power = randint(5,15)
+        self.power += super_power
+        result = super().attack(enemy)
+        self.power -= super_power
+        result = super().attack(enemy)
+        return result + f"\nБоец применил супер-атаку силой:{super_power} "
     
-    def show_hp(self):
-        return f"Хп твоего покемна: {self.hp}"
-
-    def show_attack(self):
-        return f"Сила атаки твоего покемона: {self.attack}"
+class Wizard(Pokemon):
+    pass
 
 
+    # Метод класса для получения информации
+if __name__ == '__main__':
+    wizard = Wizard("username1")
+    fighter = Fighter("username2")
 
+    print(wizard.info())
+    print()
+    print(fighter.info())
+    print()
+    print(fighter.attack(wizard))
